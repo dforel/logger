@@ -4,6 +4,8 @@ var fs = require('fs'),
     crypto = require('crypto'),
     path = require('path');
 
+var slice = Array.prototype.slice;
+
 /**
  * Logger
  * @param {object} opt
@@ -31,7 +33,7 @@ Logger.prototype.stream = function(type) {
     var tar = this._streams[type];
 
     if (!tar || skey !== tar.key ) {
-        if (tar.stream) {
+        if (tar && tar.stream) {
             tar.stream.end();
         }
         this._streams[type] = {
@@ -49,10 +51,9 @@ Logger.prototype.stream = function(type) {
  * @param  {string} type
  * @param  *
  */
-Logger.prototype.log = function(type){
-    var stream = this.stream(type);
+Logger.prototype.write = function(type){
     var tm = _time(true);
-    var args = Array.prototype.slice.call(arguments, 1);
+    var args = slice.call(arguments, 1);
     var content = args.map(function(arg){
         if (arg && typeof arg === 'object' ) {
             return JSON.stringify(arg);
@@ -60,7 +61,27 @@ Logger.prototype.log = function(type){
         return arg || '';
     }).join(' ');
     var line = '★['+tm+']: ' + content + '\n';
+    var stream = this.stream(type);
     stream.write(line);
+}
+
+/**
+ * Log sth.
+ */
+Logger.prototype.log = function(){
+    this.write.apply(this, ['log'].concat(slice.call(arguments)));
+}
+
+/**
+ * Bind one type of log.
+ * @param  {string} type
+ * @return {function}
+ */
+Logger.prototype.bind = function(type){
+    return function(){
+        var args = slice.call(arguments);
+        this.write.apply(this, [type].concat(args));
+    }.bind(this);
 }
 
 /**
@@ -75,10 +96,10 @@ function _time(format) {
 	var m = dt.getMonth() + 1;
 	var d = dt.getDate();
 
-    var H = dat.getHours();
-	var M = dat.getMinutes();
-	var S = dat.getSeconds();
-	var MM = dat.getMilliseconds();
+    var H = dt.getHours();
+	var M = dt.getMinutes();
+	var S = dt.getSeconds();
+	var MM = dt.getMilliseconds();
 
     if (m <= 9) m = '0' + m;
 	if (d <= 9) d = '0' + d;
