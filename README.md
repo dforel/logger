@@ -21,9 +21,13 @@ var logger = Logger({
 logger.log('hello guys !');
 // output: testapp_log_20160118hh.log
 
-var publog = logger.bind('publish');
-publog('new version published.', 'v2.0');
+logger.bind('publish');
+logger.publish('new version published.', 'v2.0');
 // output: testapp_publish_20160118hh.log
+
+var errlog = logger.bind('error');
+errlog('some error', err);
+// output: testapp_error_20160120hh.log
 ```
 
 ### License

@@ -14,7 +14,7 @@ function Logger(opt) {
     if (!(this instanceof Logger)) {
         return new Logger(opt);
     }
-    this._dir = opt.dir || '../private/logs';
+    this._dir = opt.dir || '../private/log';
     this._name = opt.name || 'logger';
     this._streams = {};
 }
@@ -60,7 +60,7 @@ Logger.prototype.write = function(type){
         }
         return arg || '';
     }).join(' ');
-    var line = '★['+tm+']: ' + content + '\n';
+    var line = '['+tm+'] ' + content + '\n';
     var stream = this.stream(type);
     stream.write(line);
 }
@@ -78,10 +78,13 @@ Logger.prototype.log = function(){
  * @return {function}
  */
 Logger.prototype.bind = function(type){
-    return function(){
-        var args = slice.call(arguments);
-        this.write.apply(this, [type].concat(args));
-    }.bind(this);
+    if (!this[type]) {
+        this[type] = function(){
+            var args = slice.call(arguments);
+            this.write.apply(this, [type].concat(args));
+        }.bind(this);
+    }
+    return this[type];
 }
 
 /**
