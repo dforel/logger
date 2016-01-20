@@ -17,6 +17,11 @@ function Logger(opt) {
     this._dir = opt.dir || '../private/log';
     this._name = opt.name || 'logger';
     this._streams = {};
+
+    // Default loggers.
+    ;['log', 'info', 'warn', 'debug', 'error'].forEach(function(logType){
+        this.bind(logType);
+    }.bind(this));
 }
 
 /**
@@ -63,13 +68,6 @@ Logger.prototype.write = function(type){
     var line = '['+tm+'] ' + content + '\n';
     var stream = this.stream(type);
     stream.write(line);
-}
-
-/**
- * Log sth.
- */
-Logger.prototype.log = function(){
-    this.write.apply(this, ['log'].concat(slice.call(arguments)));
 }
 
 /**

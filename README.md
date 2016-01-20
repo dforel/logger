@@ -1,5 +1,7 @@
 # logger
-Log lib.
+日志库。
+
+按小时切分日志文件，输出文件格式：loggerName_logType_yyyymmddhh.log
 
 ### Install
 ```js
@@ -7,8 +9,8 @@ npm i tvrcgo/logger
 ```
 
 ### Content
-- `log()` Log something.
-- `bind()` Bind one type of log.
+- `log()` 写日志。其它默认日志类型: info, warn, debug, error。
+- `bind()` 绑定一种非默认日志类型。
 
 ### Usage
 ```js
@@ -21,13 +23,16 @@ var logger = Logger({
 logger.log('hello guys !');
 // output: testapp_log_20160118hh.log
 
+logger.error('error happened');
+// output: testapp_error_20160120hh.log
+
 logger.bind('publish');
 logger.publish('new version published.', 'v2.0');
 // output: testapp_publish_20160118hh.log
 
-var errlog = logger.bind('error');
-errlog('some error', err);
-// output: testapp_error_20160120hh.log
+var beatlog = logger.bind('beat');
+beatlog('heart beat now.');
+// output: testapp_beat_20160120hh.log
 ```
 
 ### License
