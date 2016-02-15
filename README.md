@@ -4,13 +4,14 @@
 按小时切分日志文件，输出文件格式：loggerName_logType_yyyymmddhh.log
 
 ### Install
-```js
+```
 npm i tvrcgo/logger
 ```
 
 ### Content
 - `log()` 写日志。其它默认日志类型: info, warn, debug, error。
 - `bind()` 绑定一种非默认日志类型。
+- `clean()` 清除日志，默认30天前，可指定。
 
 ### Usage
 ```js

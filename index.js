@@ -14,7 +14,7 @@ function Logger(opt) {
     if (!(this instanceof Logger)) {
         return new Logger(opt);
     }
-    this._dir = opt.dir || '../private/log';
+    this._dir = opt.dir || './log';
     this._name = opt.name || 'logger';
     this._streams = {};
 
@@ -83,6 +83,26 @@ Logger.prototype.bind = function(type){
         }.bind(this);
     }
     return this[type];
+}
+
+/**
+ * 清除n天前日志
+ * @param {int} days
+ */
+Logger.prototype.clean = function(days){
+    days = days || 30;
+    var files = fs.readdirSync(this._dir);
+    files && files.forEach(function(file){
+        var tm = file.match(/\d{,10}/);
+        if (tm) {
+            var day1 = ~~tm[0].substr(0,4)*365 + ~~tm[0].substr(4,2)*30 + ~~tm[0].substr(6,2);
+            var t = new Date;
+            var day2 = t.getFullYear()*365 + (t.getMonth()+1)*30 + t.getDate();
+            if (day2 - day1 > days) {
+                fs.unlinkSync(path.join(this._dir, file));
+            }
+        }
+    })
 }
 
 /**
